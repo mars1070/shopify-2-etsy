@@ -62,12 +62,20 @@ Generate:
 1. SEO TITLE (max 140 characters):
    Create a title with 2 or 3 keyword-rich phrases separated by " | "
    Each phrase should be descriptive and natural, using connector words (for, with, in) where it makes sense.
-   Start by naming the product directly with its visible color/material.
    
-   Examples of style:
-   - "Gold Diamond Bottom Grillz | Custom Fit Iced Out Teeth for Hip Hop"
-   - "Brushed Gold Sink Faucet | Modern Single Handle Fixture for Bathroom Vanity"
-   - "Brown Leather Bifold Wallet | Vintage Card Holder with RFID Blocking"
+   CRITICAL: Start with the product's MOST DISTINCTIVE feature (design, symbol, pattern) in 2-4 words, THEN add material/color if needed.
+   You can use up to 4 words if it makes the description more precise and complete.
+   Priority order: Distinctive Design Element > Material/Finish > Generic Type
+   
+   Examples of GOOD titles:
+   - "Viking Arrowhead Necklace | Norse Vegvisir Compass Pendant | Stainless Steel Men's Jewelry"
+   - "Tall Gold Vintage Faucet | Waterfall Spout Bathroom Fixture | Single Handle Basin Tap"
+   - "Snake Head Bracelet | Braided Metal & Leather Wristband for Men | Gothic Biker Jewelry"
+   - "Brushed Bronze Bathroom Faucet | Modern Single Handle Mixer | Tall Vessel Sink Tap"
+   
+   Examples of BAD titles (too generic at start):
+   - "Silver Stainless Steel Necklace | Norse Viking Arrowhead..." ❌ (material first)
+   - "Metal Bracelet | Snake Head Design..." ❌ (generic type first)
 
 2. DESCRIPTION:
    CRITICAL FORMATTING RULES:
