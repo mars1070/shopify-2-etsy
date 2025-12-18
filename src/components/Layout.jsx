@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Settings, ArrowLeftRight, Info } from 'lucide-react'
+import { Home, Settings, ArrowLeftRight, Info, Sparkles } from 'lucide-react'
 
 const Layout = ({ children }) => {
   const location = useLocation()
 
   const navItems = [
-    { path: '/', icon: Home, label: 'Conversion' },
+    { path: '/', icon: Home, label: '📝 Rédaction CSV' },
+    { path: '/images', icon: Sparkles, label: '🖼️ Images AI' },
     { path: '/info', icon: Info, label: 'Infos' },
   ]
 

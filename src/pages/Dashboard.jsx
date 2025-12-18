@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Upload, Download, Sparkles, AlertCircle, CheckCircle2, Info, ArrowLeftRight } from 'lucide-react'
+import { Upload, Download, Sparkles, AlertCircle, CheckCircle2, Info, ArrowLeftRight, ImagePlus, Store } from 'lucide-react'
 import axios from 'axios'
 
 const Dashboard = () => {
@@ -78,6 +78,13 @@ const Dashboard = () => {
   const [logs, setLogs] = useState([])
   const logsEndRef = useRef(null)
   
+  // Image generation states
+  const [imageGenLoading, setImageGenLoading] = useState(false)
+  const [imageGenProgress, setImageGenProgress] = useState(null)
+  const [tempFile, setTempFile] = useState(null)
+  const [shopifyConnected, setShopifyConnected] = useState(false)
+  const [numImagesToGenerate, setNumImagesToGenerate] = useState(10)
+  
   const addLog = (message, type = 'info') => {
     const timestamp = new Date().toLocaleTimeString('fr-FR')
     const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -88,6 +95,19 @@ const Dashboard = () => {
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [logs])
+
+  // Vérifier si Shopify est connecté au chargement
+  useEffect(() => {
+    const checkShopifyConnection = async () => {
+      try {
+        const response = await axios.get('/api/settings')
+        setShopifyConnected(response.data.shopify_connected || false)
+      } catch (err) {
+        console.error('Erreur vérification Shopify:', err)
+      }
+    }
+    checkShopifyConnection()
+  }, [])
 
   const handleConvert = async () => {
     if (!file) {
@@ -123,6 +143,7 @@ const Dashboard = () => {
       // Compter les produits uniques
       if (response.data.products_count) {
         setProductCount(response.data.products_count)
+        setTempFile(response.data.temp_file) // Sauvegarder pour génération images
         addLog(`✅ ${response.data.products_count} produits détectés dans le CSV`, 'success')
         addLog(`🔄 Conversion au format Etsy terminée`, 'success')
         setNotification({ 
@@ -221,7 +242,89 @@ const Dashboard = () => {
     }
   }
 
-  // ... (reste du code)
+  // Fonction pour générer les images AI
+  const handleGenerateImages = async () => {
+    if (!tempFile) {
+      setError('Veuillez d\'abord importer et convertir un fichier CSV')
+      return
+    }
+
+    if (!shopifyConnected) {
+      setError('🛒 Shopify non connecté! Allez dans Paramètres pour connecter votre boutique.')
+      return
+    }
+
+    setImageGenLoading(true)
+    setError(null)
+    addLog('🖼️ Démarrage de la génération d\'images AI...', 'processing')
+    setNotification({ type: 'processing', message: 'Initialisation génération images...', progress: 0 })
+
+    try {
+      const streamResponse = await fetch('/api/generate-images', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          temp_file: tempFile,
+          num_images: numImagesToGenerate
+        })
+      })
+
+      if (!streamResponse.ok) {
+        const errorData = await streamResponse.json()
+        throw new Error(errorData.error || 'Erreur serveur')
+      }
+
+      const reader = streamResponse.body.getReader()
+      const decoder = new TextDecoder()
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        
+        const chunk = decoder.decode(value)
+        const lines = chunk.split('\n\n')
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.substring(6))
+              
+              if (data.status === 'error') {
+                addLog(`❌ ${data.message}`, 'error')
+                setError(data.message)
+                setNotification({ type: 'error', message: data.message, progress: 0 })
+                break
+              } else if (data.status === 'starting') {
+                addLog(data.message, 'info')
+                setNotification({ type: 'processing', message: data.message, progress: 5 })
+              } else if (data.status === 'processing' || data.status === 'generating') {
+                addLog(data.message, 'processing')
+                setNotification({ type: 'processing', message: data.message, progress: data.progress || 0 })
+              } else if (data.status === 'product_done') {
+                addLog(data.message, 'success')
+                setNotification({ type: 'processing', message: data.message, progress: data.progress })
+              } else if (data.status === 'warning') {
+                addLog(data.message, 'warning')
+              } else if (data.status === 'complete') {
+                addLog(data.message, 'success')
+                setNotification({ type: 'success', message: data.message, progress: 100 })
+                setImageGenProgress(null)
+              }
+            } catch (e) {
+              console.error('Erreur parsing stream images', e)
+            }
+          }
+        }
+      }
+    } catch (err) {
+      const errorMsg = err.message || 'Erreur lors de la génération d\'images'
+      addLog(`❌ ${errorMsg}`, 'error')
+      setError(errorMsg)
+      setNotification({ type: 'error', message: errorMsg, progress: 0 })
+    } finally {
+      setImageGenLoading(false)
+    }
+  }
 
   // Notification Component
   const NotificationBubble = () => {
@@ -654,6 +757,89 @@ const Dashboard = () => {
               'Lancez la conversion pour générer l\'aperçu final.'
             )}
           </div>
+        </div>
+      )}
+
+      {/* Image Generation Section - Show after CSV import */}
+      {file && !result && (
+        <div className="bg-gradient-to-br from-pink-50 to-orange-50 rounded-xl shadow-md border-2 border-pink-200 p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-gradient-to-r from-pink-500 to-orange-500 p-2 rounded-lg">
+                <ImagePlus className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">🖼️ Génération d'Images AI (Optionnel)</h2>
+                <p className="text-sm text-gray-600">Gemini 2.5 Flash Image génère des variations réalistes</p>
+              </div>
+            </div>
+            {shopifyConnected ? (
+              <span className="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                <Store className="w-3 h-3" />
+                Shopify connecté
+              </span>
+            ) : (
+              <span className="bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">
+                Shopify non connecté
+              </span>
+            )}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
+            <div className="bg-white rounded-lg p-4 border border-pink-200">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Nombre d'images par produit
+              </label>
+              <select
+                value={numImagesToGenerate}
+                onChange={(e) => setNumImagesToGenerate(parseInt(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+              >
+                <option value={5}>5 images</option>
+                <option value={10}>10 images (recommandé)</option>
+                <option value={15}>15 images (max)</option>
+              </select>
+            </div>
+            <div className="bg-white rounded-lg p-4 border border-pink-200">
+              <p className="text-sm font-medium text-gray-700 mb-2">Ce que fait Gemini :</p>
+              <ul className="text-xs text-gray-600 space-y-1">
+                <li>✅ Lit l'image originale du produit</li>
+                <li>✅ Génère des angles différents (réalistes)</li>
+                <li>✅ Upload vers Shopify CDN</li>
+                <li>✅ Remplace les URLs dans le CSV</li>
+              </ul>
+            </div>
+          </div>
+
+          <button
+            onClick={handleGenerateImages}
+            disabled={!tempFile || imageGenLoading || !shopifyConnected}
+            className="w-full bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-[1.02] disabled:scale-100 shadow-lg flex items-center justify-center gap-3"
+          >
+            {imageGenLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                <span>Génération en cours...</span>
+              </>
+            ) : (
+              <>
+                <ImagePlus className="w-5 h-5" />
+                <span>🎨 Générer {numImagesToGenerate} Images AI par Produit</span>
+              </>
+            )}
+          </button>
+          
+          {!shopifyConnected && (
+            <p className="mt-3 text-sm text-red-600 text-center">
+              ⚠️ Connectez votre boutique Shopify dans <strong>Paramètres</strong> pour utiliser cette fonctionnalité
+            </p>
+          )}
+          
+          {!tempFile && file && (
+            <p className="mt-3 text-sm text-orange-600 text-center">
+              ⚠️ Lancez d'abord la conversion CSV avant de générer les images
+            </p>
+          )}
         </div>
       )}
 
