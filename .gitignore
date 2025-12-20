@@ -1,0 +1,47 @@
+# Node / Front
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+yarn-error.log*
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Environnements et secrets
+.env
+.env.*
+settings.json
+backend/settings.json
+
+# Fichiers générés
+uploads/
+backend/uploads/
+outputs/
+backend/outputs/
+*.log
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+node_modules/
+dist/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.csv
+!*template*.csv
+uploads/
+outputs/
+.DS_Store
