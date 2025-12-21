@@ -18,9 +18,11 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-UPLOAD_FOLDER = 'uploads'
-OUTPUT_FOLDER = 'outputs'
-SETTINGS_FILE = os.path.abspath('settings.json')
+# Utiliser des chemins absolus basés sur le dossier parent (racine du projet)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, 'uploads')
+OUTPUT_FOLDER = os.path.join(PROJECT_ROOT, 'outputs')
+SETTINGS_FILE = os.path.join(PROJECT_ROOT, 'settings.json')
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
