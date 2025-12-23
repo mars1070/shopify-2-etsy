@@ -5,6 +5,7 @@ import Settings from './pages/Settings'
 import Info from './pages/Info'
 import AuthCallback from './pages/AuthCallback'
 import ImageGeneration from './pages/ImageGeneration'
+import Titles from './pages/Titles'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         
         {/* Routes avec Layout */}
         <Route path="/" element={<Layout><Dashboard /></Layout>} />
+        <Route path="/titles" element={<Layout><Titles /></Layout>} />
         <Route path="/images" element={<Layout><ImageGeneration /></Layout>} />
         <Route path="/settings" element={<Layout><Settings /></Layout>} />
         <Route path="/info" element={<Layout><Info /></Layout>} />

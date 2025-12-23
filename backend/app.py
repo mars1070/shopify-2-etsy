@@ -4,6 +4,7 @@ import os
 import secrets
 import hmac
 import hashlib
+import time
 from urllib.parse import urlencode
 from dotenv import load_dotenv
 from converter import ShopifyToEtsyConverter
@@ -89,6 +90,94 @@ def convert():
         })
     
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/title-generator', methods=['POST'])
+def title_generator():
+    """
+    Génère uniquement des titres optimisés à partir d'un CSV en utilisant les images fournies.
+    """
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'Aucun fichier fourni'}), 400
+        
+        image_column = request.form.get('image_column')
+        identifier_column = request.form.get('identifier_column', '')
+        
+        if not image_column:
+            return jsonify({'error': 'Sélectionnez la colonne qui contient les images'}), 400
+        
+        file = request.files['file']
+        df = pd.read_csv(file)
+        
+        if image_column not in df.columns:
+            return jsonify({'error': f"La colonne '{image_column}' est introuvable dans le CSV"}), 400
+        
+        if identifier_column and identifier_column not in df.columns:
+            identifier_column = ''
+        
+        settings = load_settings()
+        api_key = settings.get('gemini_api_key') or os.getenv('GEMINI_API_KEY')
+        
+        if not api_key:
+            return jsonify({'error': '🔑 Clé API Gemini manquante! Configurez-la dans Paramètres.'}), 400
+        
+        enhancer = GeminiEnhancer(api_key)
+        
+        total_rows = len(df)
+        generated_rows = []
+        skipped_rows = 0
+        
+        if 'AI Title' not in df.columns:
+            df['AI Title'] = ''
+        
+        for idx, row in df.iterrows():
+            image_value = row.get(image_column)
+            if pd.isna(image_value):
+                skipped_rows += 1
+                continue
+            
+            image_url = str(image_value).strip()
+            if not image_url or image_url.lower() == 'nan':
+                skipped_rows += 1
+                continue
+            
+            image_bytes = enhancer.download_image_as_base64(image_url)
+            if not image_bytes:
+                skipped_rows += 1
+                continue
+            
+            title = enhancer.generate_title_from_image(image_bytes)
+            if not title:
+                skipped_rows += 1
+                continue
+            
+            df.at[idx, 'AI Title'] = title
+            generated_rows.append({
+                'identifier': str(row.get(identifier_column)) if identifier_column else f"Ligne {idx + 1}",
+                'image_url': image_url,
+                'ai_title': title
+            })
+        
+        output_filename = f"ai_titles_{int(time.time())}.csv"
+        output_path = os.path.join(OUTPUT_FOLDER, output_filename)
+        df.to_csv(output_path, index=False)
+        
+        preview_rows = generated_rows[:30]
+        
+        return jsonify({
+            'success': True,
+            'message': f"{len(generated_rows)} titres générés",
+            'output_file': output_filename,
+            'generated_count': len(generated_rows),
+            'skipped_count': skipped_rows,
+            'total_rows': total_rows,
+            'preview_columns': ['identifier', 'image_url', 'ai_title'],
+            'preview_rows': preview_rows
+        })
+    
+    except Exception as e:
+        print(f"❌ Erreur titre AI: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/enhance', methods=['POST'])

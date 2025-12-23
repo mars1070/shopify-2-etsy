@@ -257,6 +257,39 @@ TAGS: tag1,tag2,tag3,tag4,tag5,tag6,tag7,tag8,tag9,tag10,tag11,tag12,tag13
         except Exception as e:
             print(f"Erreur Gemini: {e}")
             return None
+    
+    def generate_title_from_image(self, image_bytes):
+        """
+        Génère uniquement un titre Etsy optimisé à partir d'une image produit.
+        """
+        try:
+            prompt = """You are an elite Etsy SEO copywriter. Analyze the attached product photo and output ONE single product title in English (max 140 characters).
+
+Formatting rules (MANDATORY):
+- Respond with a single line starting with 'TITLE:' followed by the title.
+- EXACTLY TWO segments separated by ' | '. Never add a third segment.
+- Segment 1 MUST begin with the explicit product name (what the item actually is) followed immediately by its most distinctive visual trait (pattern, motif, feature).
+- Segment 2 must expand with material/finish + audience or primary use, written as a full descriptive clause (not a short “mini-title”).
+- Keep every word in Title Case (capitalize first letter of each significant word).
+- Do NOT mention store names, branding, shipping, or bundle counts.
+- Avoid generic openings like "Beautiful" or "Amazing" – focus on what it actually is.
+- NEVER invent attributes not visible on the image.
+"""
+            image_part = {'mime_type': 'image/jpeg', 'data': image_bytes}
+            response = self.model.generate_content([prompt, image_part])
+            raw_text = response.text or ""
+            
+            for line in raw_text.split('\n'):
+                clean_line = line.strip()
+                if clean_line.lower().startswith('title:'):
+                    generated = clean_line.split(':', 1)[1].strip()
+                    return generated[:140]
+            
+            # Fallback: return first 140 chars of response
+            return raw_text.strip()[:140] if raw_text else None
+        except Exception as e:
+            print(f"Erreur titre Gemini: {e}")
+            return None
 
     def process_single_product(self, row, max_retries=3):
         """
