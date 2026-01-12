@@ -377,8 +377,8 @@ def shopify_oauth_start():
         print(f"State saved to file: {OAUTH_STATES_FILE}")
         
         # Construire l'URL d'autorisation Shopify
-        # Utiliser l'URL de production si disponible, sinon localhost
-        base_url = os.getenv('VERCEL_URL', 'http://localhost:3000')
+        # Utiliser l'URL de production
+        base_url = os.getenv('VERCEL_URL', 'https://shopify-2-etsy.vercel.app')
         if not base_url.startswith('http'):
             base_url = f'https://{base_url}'
         redirect_uri = f'{base_url}/auth/callback'

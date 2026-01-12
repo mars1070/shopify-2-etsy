@@ -301,10 +301,10 @@ const Settings = () => {
                 <li>Dans <strong>"App URL"</strong>, entrez :</li>
               </ol>
               <div className="mt-2 mb-3 flex items-center gap-2">
-                <code className="flex-1 bg-white border border-yellow-400 px-3 py-2 rounded text-sm font-mono select-all">http://localhost:3000</code>
+                <code className="flex-1 bg-white border border-yellow-400 px-3 py-2 rounded text-sm font-mono select-all">https://shopify-2-etsy.vercel.app</code>
                 <button
                   type="button"
-                  onClick={() => navigator.clipboard.writeText('http://localhost:3000')}
+                  onClick={() => navigator.clipboard.writeText('https://shopify-2-etsy.vercel.app')}
                   className="bg-yellow-200 hover:bg-yellow-300 text-yellow-800 px-3 py-2 rounded text-xs font-medium transition-colors"
                 >
                   📋 Copier
@@ -315,10 +315,10 @@ const Settings = () => {
                 <li>Dans <strong>"Allowed redirection URL(s)"</strong>, entrez :</li>
               </ol>
               <div className="mt-2 mb-3 flex items-center gap-2">
-                <code className="flex-1 bg-white border border-yellow-400 px-3 py-2 rounded text-sm font-mono select-all">http://localhost:3000/auth/callback</code>
+                <code className="flex-1 bg-white border border-yellow-400 px-3 py-2 rounded text-sm font-mono select-all">https://shopify-2-etsy.vercel.app/auth/callback</code>
                 <button
                   type="button"
-                  onClick={() => navigator.clipboard.writeText('http://localhost:3000/auth/callback')}
+                  onClick={() => navigator.clipboard.writeText('https://shopify-2-etsy.vercel.app/auth/callback')}
                   className="bg-yellow-200 hover:bg-yellow-300 text-yellow-800 px-3 py-2 rounded text-xs font-medium transition-colors"
                 >
                   📋 Copier
