@@ -1,0 +1,160 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                          🚀 SHOPIFY 2 ETSY 🚀                               ║
+║                                                                              ║
+║                  Convertisseur CSV avec Optimisation AI                      ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+📋 QU'EST-CE QUE C'EST ?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Application web qui convertit automatiquement vos produits Shopify vers Etsy
+avec optimisation AI via Google Gemini.
+
+✅ Import CSV Shopify (images multiples, variantes, etc.)
+✅ Multiplicateur de prix intelligent (arrondi à X,90€)
+✅ Optimisation AI : Titres, Descriptions, Tags
+✅ Interface web moderne et simple
+✅ Export CSV Etsy prêt à importer
+
+
+⚡ DÉMARRAGE RAPIDE (3 ÉTAPES)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣  INSTALLER LES DÉPENDANCES
+   
+   Ouvrez PowerShell dans ce dossier et exécutez :
+   
+   npm install
+   pip install -r requirements.txt
+
+
+2️⃣  CONFIGURER L'API GEMINI
+   
+   - Obtenez votre clé API : https://makersuite.google.com/app/apikey
+   - Ouvrez le fichier .env
+   - Ajoutez votre clé : GEMINI_API_KEY=votre_cle_ici
+
+
+3️⃣  LANCER L'APPLICATION
+   
+   Double-cliquez sur : start.bat
+   
+   OU manuellement :
+   Terminal 1 : python backend/app.py
+   Terminal 2 : npm run dev
+   
+   Puis ouvrez : http://localhost:3000
+
+
+🎯 UTILISATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Ouvrez http://localhost:3000
+2. Allez dans "Paramètres" (en bas) et entrez votre clé API Gemini
+3. Retournez sur "Conversion"
+4. Importez votre CSV Shopify
+5. Définissez le multiplicateur de prix (ex: 2.5)
+6. Cliquez sur "Convertir avec Gemini AI"
+7. Téléchargez votre CSV Etsy optimisé !
+
+
+💰 EXEMPLE DE PRIX
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Prix Shopify : 10,00€
+Multiplicateur : 2.5
+Calcul : 10 × 2.5 = 25,00€
+Prix Final Etsy : 24,90€ ✨
+
+Tous les prix sont automatiquement arrondis à X,90€ !
+
+
+🤖 CE QUE FAIT GEMINI AI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Pour chaque produit, Gemini :
+
+📸 Analyse la première image
+✍️  Génère un titre optimisé SEO (max 140 caractères)
+📝 Crée une description attractive (200-300 mots)
+🏷️  Propose 13 tags pertinents pour Etsy
+
+
+📁 FICHIERS IMPORTANTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 README.md           → Documentation complète
+⚡ QUICK_START.md      → Guide démarrage rapide
+📋 CSV_FORMAT.md       → Format des CSV Shopify/Etsy
+🌟 FEATURES.md         → Liste des fonctionnalités
+📊 PROJECT_SUMMARY.md  → Vue d'ensemble technique
+
+⚙️  backend/config.py  → Modifier les valeurs par défaut Etsy
+🔑 .env                → Clé API Gemini
+
+
+📂 STRUCTURE DU PROJET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Shopify 2 Etsy/
+├── backend/           → Backend Flask (Python)
+├── src/               → Frontend React
+├── uploads/           → CSV Shopify importés
+├── outputs/           → CSV Etsy générés
+├── start.bat          → Script démarrage Windows
+└── test_converter.py  → Test sans interface web
+
+
+🔧 PERSONNALISATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Modifiez backend/config.py pour changer :
+
+- "Who made it?" : I did
+- "When was it made?" : 2020_2024
+- Materials : Copper, Gold plating, Zircon
+- Quantité par défaut : 999
+- Multiplicateur par défaut : 2.5
+
+
+⚠️  DÉPANNAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ Erreur "Module not found"
+   → pip install -r requirements.txt
+   → npm install
+
+❌ Gemini API ne fonctionne pas
+   → Vérifiez votre clé API dans .env
+   → Assurez-vous d'avoir activé l'API Gemini
+
+❌ Port déjà utilisé
+   → Changez le port dans backend/app.py (ligne app.run(port=5000))
+   → Changez le port dans vite.config.js
+
+
+📞 SUPPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Consultez la documentation :
+- README.md pour les détails complets
+- QUICK_START.md pour un guide rapide
+- CSV_FORMAT.md pour comprendre les formats
+
+
+🎉 PRÊT À COMMENCER ?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Double-cliquez sur start.bat
+2. Ouvrez http://localhost:3000
+3. Convertissez vos produits !
+
+Bon courage ! 🚀
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                        Fait avec ❤️  pour les vendeurs
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
